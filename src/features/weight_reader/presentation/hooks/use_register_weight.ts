@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Weight } from "../../domain/entities/weight.entity";
 
-export type WeightStep = "tare" | "gross" | "net";
+export type WeightStep = "tare" | "gross" | "net" | "form";
 
 export const useRegisterWeight = () => {
   const [tare, setTare] = useState<Weight>(Weight.zero());
@@ -17,6 +17,7 @@ export const useRegisterWeight = () => {
         setNetWeight(Weight.calculateNetWeight(gross, tare));
       },
       net: () => null,
+      form: () => null,
     }[step];
     return handlerMapper(weight);
   };

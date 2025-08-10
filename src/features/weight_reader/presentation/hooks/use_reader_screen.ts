@@ -30,6 +30,9 @@ export const useReaderScreen = () => {
         updateStep("net");
         break;
       case "net":
+        updateStep("form");
+        break;
+      case "form":
         break;
       default:
         break;
