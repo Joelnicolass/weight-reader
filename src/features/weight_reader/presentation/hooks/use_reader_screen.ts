@@ -11,6 +11,9 @@ export const useReaderScreen = () => {
     updateStep,
     registerWeight,
     resetWeights,
+    editTare,
+    editGrossWeight,
+    editNetWeight,
   } = useRegisterWeight();
 
   const handleRegisterClick = () => {
@@ -46,6 +49,9 @@ export const useReaderScreen = () => {
       updateStep,
       registerWeight,
       resetWeights,
+      editTare,
+      editGrossWeight,
+      editNetWeight,
     },
   } as const;
 };

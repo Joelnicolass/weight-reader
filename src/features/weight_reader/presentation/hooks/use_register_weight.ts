@@ -21,6 +21,26 @@ export const useRegisterWeight = () => {
     return handlerMapper(weight);
   };
 
+  const editTare = (value: number) => {
+    const newTare = new Weight(new Date().getTime().toString(), value, true);
+    setTare(newTare);
+
+    if (grossWeight.getValue() > 0) {
+      setNetWeight(Weight.calculateNetWeight(grossWeight, newTare));
+    }
+  };
+
+  const editGrossWeight = (value: number) => {
+    const newGross = new Weight(new Date().getTime().toString(), value, true);
+    setGrossWeight(newGross);
+    setNetWeight(Weight.calculateNetWeight(newGross, tare));
+  };
+
+  const editNetWeight = (value: number) => {
+    const newNet = new Weight(new Date().getTime().toString(), value, true);
+    setNetWeight(newNet);
+  };
+
   const resetWeights = () => {
     setTare(Weight.zero());
     setGrossWeight(Weight.zero());
@@ -37,5 +57,8 @@ export const useRegisterWeight = () => {
     updateStep,
     registerWeight,
     resetWeights,
+    editTare,
+    editGrossWeight,
+    editNetWeight,
   };
 };

@@ -1,4 +1,5 @@
 import { useFormik } from "formik";
+import { useState } from "react";
 import {
   Scale,
   Truck,
@@ -8,6 +9,9 @@ import {
   FileText,
   Users,
   Building,
+  Edit3,
+  Check,
+  X,
 } from "lucide-react";
 import {
   Card,
@@ -42,9 +46,53 @@ interface WeightFormData {
 
 export default function WeightReaderScreen() {
   const {
-    actions: { handleRegisterClick, updateStep, resetWeights },
+    actions: {
+      handleRegisterClick,
+      updateStep,
+      resetWeights,
+      editTare,
+      editGrossWeight,
+      editNetWeight,
+    },
     values: { grossWeight, netWeight, tare, weight, step },
   } = useReaderScreen();
+
+  // Estados para controlar la edición
+  const [editingWeight, setEditingWeight] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState<string>("");
+
+  const startEditing = (weightType: string, currentValue: number) => {
+    setEditingWeight(weightType);
+    setEditValue(currentValue.toString());
+  };
+
+  const cancelEditing = () => {
+    setEditingWeight(null);
+    setEditValue("");
+  };
+
+  const saveEdit = (weightType: string) => {
+    const numValue = parseFloat(editValue);
+    if (isNaN(numValue) || numValue < 0) {
+      alert("Por favor ingrese un valor numérico válido");
+      return;
+    }
+
+    switch (weightType) {
+      case "tare":
+        editTare(numValue);
+        break;
+      case "gross":
+        editGrossWeight(numValue);
+        break;
+      case "net":
+        editNetWeight(numValue);
+        break;
+    }
+
+    setEditingWeight(null);
+    setEditValue("");
+  };
 
   const formik = useFormik<WeightFormData>({
     initialValues: {
@@ -181,27 +229,173 @@ export default function WeightReaderScreen() {
               </Button>
 
               <div className="grid grid-cols-3 gap-4 text-center">
+                {/* Tara */}
                 <div className="p-4 bg-secondary rounded-lg border transition-all duration-200 hover:bg-secondary/80 hover:-translate-y-0.5 hover:shadow-md animate-in fade-in-50 duration-300">
-                  <div className="text-2xl font-bold font-mono text-foreground">
-                    {tare.getValue()}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-sm text-muted-foreground">
+                      Tara (kg)
+                    </div>
+                    {tare.getValue() > 0 && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0"
+                        onClick={() => startEditing("tare", tare.getValue())}
+                        disabled={editingWeight !== null}
+                      >
+                        <Edit3 className="h-3 w-3" />
+                      </Button>
+                    )}
                   </div>
-                  <div className="text-sm text-muted-foreground">Tara (kg)</div>
+                  {editingWeight === "tare" ? (
+                    <div className="space-y-2">
+                      <Input
+                        type="number"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        className="text-center"
+                        placeholder="0"
+                        step="0.1"
+                        min="0"
+                      />
+                      <div className="flex gap-1 justify-center">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0"
+                          onClick={() => saveEdit("tare")}
+                        >
+                          <Check className="h-3 w-3 text-green-600" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0"
+                          onClick={cancelEditing}
+                        >
+                          <X className="h-3 w-3 text-red-600" />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-2xl font-bold font-mono text-foreground">
+                      {tare.getValue()}
+                    </div>
+                  )}
                 </div>
+
+                {/* Peso Bruto */}
                 <div className="p-4 bg-secondary rounded-lg border transition-all duration-200 hover:bg-secondary/80 hover:-translate-y-0.5 hover:shadow-md animate-in fade-in-50 duration-500">
-                  <div className="text-2xl font-bold font-mono text-foreground">
-                    {grossWeight.getValue()}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-sm text-muted-foreground">
+                      Peso Bruto (kg)
+                    </div>
+                    {grossWeight.getValue() > 0 && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0"
+                        onClick={() =>
+                          startEditing("gross", grossWeight.getValue())
+                        }
+                        disabled={editingWeight !== null}
+                      >
+                        <Edit3 className="h-3 w-3" />
+                      </Button>
+                    )}
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    Peso Bruto (kg)
-                  </div>
+                  {editingWeight === "gross" ? (
+                    <div className="space-y-2">
+                      <Input
+                        type="number"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        className="text-center"
+                        placeholder="0"
+                        step="0.1"
+                        min="0"
+                      />
+                      <div className="flex gap-1 justify-center">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0"
+                          onClick={() => saveEdit("gross")}
+                        >
+                          <Check className="h-3 w-3 text-green-600" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0"
+                          onClick={cancelEditing}
+                        >
+                          <X className="h-3 w-3 text-red-600" />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-2xl font-bold font-mono text-foreground">
+                      {grossWeight.getValue()}
+                    </div>
+                  )}
                 </div>
+
+                {/* Peso Neto */}
                 <div className="p-4 bg-secondary rounded-lg border transition-all duration-200 hover:bg-secondary/80 hover:-translate-y-0.5 hover:shadow-md animate-in fade-in-50 duration-700">
-                  <div className="text-2xl font-bold text-primary font-mono">
-                    {netWeight.getValue()}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-sm text-muted-foreground">
+                      Peso Neto (kg)
+                    </div>
+                    {netWeight.getValue() > 0 && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0"
+                        onClick={() =>
+                          startEditing("net", netWeight.getValue())
+                        }
+                        disabled={editingWeight !== null}
+                      >
+                        <Edit3 className="h-3 w-3" />
+                      </Button>
+                    )}
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    Peso Neto (kg)
-                  </div>
+                  {editingWeight === "net" ? (
+                    <div className="space-y-2">
+                      <Input
+                        type="number"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        className="text-center"
+                        placeholder="0"
+                        step="0.1"
+                        min="0"
+                      />
+                      <div className="flex gap-1 justify-center">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0"
+                          onClick={() => saveEdit("net")}
+                        >
+                          <Check className="h-3 w-3 text-green-600" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0"
+                          onClick={cancelEditing}
+                        >
+                          <X className="h-3 w-3 text-red-600" />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-2xl font-bold text-primary font-mono">
+                      {netWeight.getValue()}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
