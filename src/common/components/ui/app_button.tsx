@@ -14,7 +14,7 @@ export const AppButton = forwardRef<HTMLButtonElement, AppButtonProps>(
     return (
       <ShadcnButton
         ref={ref}
-        className={cn(className)}
+        className={cn("cursor-pointer transition-all duration-150", className)}
         variant={variant}
         size={size}
         asChild={asChild}
