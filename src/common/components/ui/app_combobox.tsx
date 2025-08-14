@@ -65,7 +65,11 @@ export const AppComboBox = forwardRef<HTMLButtonElement, AppComboBoxProps>(
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={cn("w-full justify-between", className)}
+            className={cn(
+              "w-full justify-between",
+              selectedOption ? "text-foreground" : "text-muted-foreground",
+              className
+            )}
             disabled={disabled}
             {...props}
           >
